@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 )
@@ -43,27 +44,32 @@ func handleLogin(w http.ResponseWriter, r *http.Request) {
 
 	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(resp{
-			Status: "error",
-			Msg:    "malformed request",
-		})
+		returnError(w, "malformed request")
 		return
 	}
 
 	if input.Email != "foo" || input.Password != "bar" {
 		w.WriteHeader(http.StatusUnauthorized)
-		json.NewEncoder(w).Encode(resp{
-			Status: "error",
-			Msg:    "invalid credentials",
-		})
+		returnError(w, "invalid credentials")
 		return
 	}
 
-	err := json.NewEncoder(w).Encode(resp{
-		Status: "success",
-		Msg:    "valid credentials",
-	})
-	if err != nil {
+	returnSuccess(w, "valid credentials")
+}
+
+func returnSuccess(w io.Writer, msg string) {
+	returnResp(w, "success", msg)
+}
+
+func returnError(w io.Writer, msg string) {
+	returnResp(w, "error", msg)
+}
+
+func returnResp(w io.Writer, status string, msg string) {
+	if err := json.NewEncoder(w).Encode(resp{
+		Status: status,
+		Msg:    msg,
+	}); err != nil {
 		log.Println("error encoding response: ", err.Error())
 	}
 }
