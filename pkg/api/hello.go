@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-func sayHello(w http.ResponseWriter, r *http.Request) {
+func (a *Api) sayHello(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("malformed request"))

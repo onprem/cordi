@@ -7,7 +7,22 @@ import (
 	"net/http"
 )
 
-func sayPong(w http.ResponseWriter, r *http.Request) {
+type Api struct {
+	DB map[string]string
+}
+
+func New(router *http.ServeMux, username string, password string) *Api {
+	a := &Api{
+		DB: map[string]string{
+			"user":     username,
+			"password": password,
+		},
+	}
+	a.registerRoutes(router)
+	return a
+}
+
+func (a *Api) sayPong(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("pong"))
 }
 

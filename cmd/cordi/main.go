@@ -9,7 +9,8 @@ import (
 
 func main() {
 	router := http.NewServeMux()
-	api.RegisterRoutes(router)
+
+	_ = api.New(router, "foo", "secret")
 
 	if err := http.ListenAndServe("0.0.0.0:8080", router); err != nil {
 		log.Println("server listen error: ", err.Error())

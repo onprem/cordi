@@ -2,8 +2,8 @@ package api
 
 import "net/http"
 
-func RegisterRoutes(mux *http.ServeMux) {
-	mux.HandleFunc("/ping", sayPong)
-	mux.HandleFunc("/hello", sayHello)
-	mux.HandleFunc("/login", handleLogin)
+func (a *Api) registerRoutes(mux *http.ServeMux) {
+	mux.HandleFunc("/ping", a.sayPong)
+	mux.HandleFunc("/hello", a.sayHello)
+	mux.HandleFunc("/login", a.handleLogin)
 }

@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-func handleLogin(w http.ResponseWriter, r *http.Request) {
+func (a *Api) handleLogin(w http.ResponseWriter, r *http.Request) {
 	var input struct {
 		Email    string `json:"email"`
 		Password string `json:"password"`
@@ -19,7 +19,7 @@ func handleLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if input.Email != "foo" || input.Password != "bar" {
+	if input.Email != a.DB["user"] || input.Password != a.DB["password"] {
 		w.WriteHeader(http.StatusUnauthorized)
 		returnError(w, "invalid credentials")
 		return
