@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 )
 
@@ -38,6 +39,8 @@ func handleLogin(w http.ResponseWriter, r *http.Request) {
 		Password string `json:"password"`
 	}
 
+	defer r.Body.Close()
+
 	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(resp{
@@ -56,10 +59,13 @@ func handleLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	json.NewEncoder(w).Encode(resp{
+	err := json.NewEncoder(w).Encode(resp{
 		Status: "success",
 		Msg:    "valid credentials",
 	})
+	if err != nil {
+		log.Println("error encoding response: ", err.Error())
+	}
 }
 
 func main() {
@@ -68,5 +74,7 @@ func main() {
 	router.HandleFunc("/hello", sayHello)
 	router.HandleFunc("/login", handleLogin)
 
-	http.ListenAndServe("0.0.0.0:8080", router)
+	if err := http.ListenAndServe("0.0.0.0:8080", router); err != nil {
+		log.Println("server listen error: ", err.Error())
+	}
 }
